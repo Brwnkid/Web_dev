@@ -1,0 +1,93 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>Dice Game</title>
+    <link rel="stylesheet" type="text/css" href="myStyle.css">
+  </head>
+  <body>
+    <h1>Dice Game</h1>
+    <h3>Guess the correct dice roll in 3 tries and win!</h3>
+    <p>Your Current Balance: $<span id="balance">100</span></p>
+    <p>Wager: <input type=number min=1 value=1 id="wager"></input><span id="valid_wager"></span></p>
+    <p>Guess(1-6): <input type=number min=1 max=6 value=1 id="guess"></input><span id="valid_guess"></span></p>
+	<button type="button" onclick="playGame()">Roll Die</button>
+	<p id="roll1"></p>
+	<p id="roll2"></p>
+	<p id="roll3"></p><br>
+  <p id="winOrLose"></p>
+  <p id="hidden" style="visibility:hidden;">
+  Game Over. Would you like to play again?<br>
+  <button type="button" onclick="reset()">Yes</button>
+  <button type="button" onclick="gameOver()">No</button>
+  </p>
+  <script>
+    function updateBalance(new_balance){
+      document.getElementById('balance').innerHTML =  new_balance;
+    }
+
+    function rollDie(){
+      var dieValue = Math.floor(Math.random()*6+1);
+      return dieValue;
+    }
+
+    function playOneGame(guess){
+      var rolls = ["roll1","roll2","roll3"];
+      for(var i = 0; i<rolls.length; i++){
+        var dieRolled = rollDie();
+        document.getElementById(rolls[i]).innerHTML = "You rolled a " + dieRolled;
+        if(dieRolled == guess){
+          for(var j = i+1; j<rolls.length; j++){
+            document.getElementById(rolls[j]).innerHTML = "";
+          }
+          return true;
+        }
+      }
+      return false;
+    }
+
+    function playGame(){
+      var wager = Number(document.getElementById('wager').value);
+      var balance = Number(document.getElementById('balance').innerHTML);
+      var guess = Number(document.getElementById('guess').value);
+      if(guess > 6 || guess < 1){
+        document.getElementById('valid_guess').innerHTML = " Invalid Guess";
+        return;
+      }else{
+        document.getElementById('valid_guess').innerHTML = "";
+      }
+      if (wager > balance || wager < 1){
+        document.getElementById('valid_wager').innerHTML = " Invalid Wager";
+        return;
+      }else{
+        document.getElementById('valid_wager').innerHTML = "";
+      }
+
+      if(playOneGame(guess)){
+        document.getElementById('winOrLose').innerHTML = "You Win!";
+        balance = Number(balance) + wager;
+      }else{
+        document.getElementById('winOrLose').innerHTML = "You Lose. :(";
+        balance -= wager;
+      }
+      updateBalance(balance);
+      if(balance == 0){
+        document.getElementById('hidden').style.visibility = "visible";
+      }
+    }
+
+    function reset(){
+      document.getElementById('roll1').innerHTML = "";
+      document.getElementById('roll2').innerHTML = "";
+      document.getElementById('roll3').innerHTML = "";
+      document.getElementById('winOrLose').innerHTML = "";
+      document.getElementById('hidden').style.visibility = "hidden";
+      updateBalance(100);
+    }
+    function gameOver(){
+      document.getElementById('hidden').style.visibility = "hidden";
+      document.getElementById('winOrLose').innerHTML = "Game Over";
+    }
+
+  </script>
+  </body>
+</html>
